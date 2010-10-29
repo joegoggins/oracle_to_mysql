@@ -7,7 +7,7 @@ begin
     gem.name = "oracle_to_mysql"
     gem.summary = %Q{TODO: one-line summary of your gem}
     gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "goggins@umn.edu"
+    gem.email = "joe.goggins@umn.edu"
     gem.homepage = "http://github.com/joegoggins/oracle_to_mysql"
     gem.authors = ["Joe Goggins"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"

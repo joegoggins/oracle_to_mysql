@@ -1,9 +1,46 @@
-= oracle_to_mysql
+= OracleToMysql
+Pulls data out of an Oracle database with the sqlplus binary and feeds it into a MySQL database
+using the super-speedy 'load data infile' Mysql command using the mysql binary
 
-Description goes here.
+== Why?
+
+Sometimes the "Enterprise" data is in an Oracle db, it doesn't necessary mean your apps need to be too.
+If all you need is read access to this info, OracleToMysql is your friend.
+
+At the University of Minnesota, Academic Support Resources, we use this tool for doing nightly mirrors of oracle tables, that our
+Rails app use in a read-only fasion
+
+== Dependencies
+popen4 (gem)
+sqlplus, and mysql binaries are in $PATH
+
+thoughtbot-shoulda (gem) if you want to develop/hack on this gem or run the tests
+
+== Gem Development & Testing
+
+cd test
+  ruby test_oracle_to_mysql_against_ps_term_tbl.rb
+OR
+  irb -r test_oracle_to_mysql_against_ps_term_tbl.rb
+  # And monkey with the run time...all files in test/demo are loaded, you can tinker with them
+  
+This assumes you have a connection file, oracle_to_mysql.yml, in the test dir (DON"T COMMIT THIS)
+You can copy and populate oracle_to_mysql.example.yml to create the file
+
+== Strategies
+  Data can be copied via 2 basic strategies:
+  
+  :atomic_rename (Default)
+      
+  :accumulative
+    Make sure you have your otm_target_sql create table keys setup correctly, on mysql's "ON DUPLICATE KEY"
+    from source to target, it will trigger an update on an existing row
+    
+
 
 == Note on Patches/Pull Requests
- 
+* NOT SURE YET...will probably look something like:
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
@@ -14,4 +51,4 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2010 Joe Goggins. See LICENSE for details.
+Copyright (c) 2010 Joe Goggins, Chris Dinger. See LICENSE for details.
