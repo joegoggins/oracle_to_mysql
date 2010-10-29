@@ -1,0 +1,13 @@
+oracle_source:
+  username: TODO
+  password: TODO 
+  host: TODO
+  database: TODO
+  port: 1521
+
+mysql_target:
+  username: TODO
+  password: TODO
+  host: TODO
+  port: 3306
+  database: TODO

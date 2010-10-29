@@ -5,11 +5,11 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "oracle_to_mysql"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A gem for mirroring data from an oracle db to a mysql db}
+    gem.description = %Q{Wraps the sqlplus binary and mysql binary does not currently require OCI8 or MySQL gems (might someday tho)}
     gem.email = "joe.goggins@umn.edu"
     gem.homepage = "http://github.com/joegoggins/oracle_to_mysql"
-    gem.authors = ["Joe Goggins"]
+    gem.authors = ["Joe Goggins","Chris Dinger"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
