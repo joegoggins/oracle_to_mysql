@@ -68,13 +68,27 @@ module OracleToMysql
     
     # Returns all temp files that all commands in the current strategy can create
     #
-    def all_temp_files
+    def otm_all_temp_files
       return_this = []
       self.otm_execute_command_names.each do |command_name|
         command = OracleToMysql.get_and_bind_command(command_name, self)
         return_this += command.temp_file_symbols.map {|sym| self.otm_get_file_name_for(sym)}
       end
       return_this.uniq
+    end
+        
+    # returns an array of all target tables by reflecting the table retention options
+    #
+    def otm_all_target_tables
+      return_this = [self.otm_target_table]
+      if self.otm_retain_options[:n] == 0
+        return_this
+      else
+        (1..self.otm_retain_options[:n]).to_enum.each do |x|
+          return_this << self.otm_retained_target_table(x)
+        end
+        return_this
+      end
     end
   end
 end

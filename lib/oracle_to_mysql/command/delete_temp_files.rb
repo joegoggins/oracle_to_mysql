@@ -2,7 +2,7 @@ module OracleToMysql
   class Command
     class DeleteTempFiles < OracleToMysql::Command              
       def execute_internal
-        self.client_class.all_temp_files.each do |temp_file|
+        self.client_class.otm_all_temp_files.each do |temp_file|
           begin
             self.info("Deleting temp file, #{temp_file}")
             File.unlink(temp_file)
