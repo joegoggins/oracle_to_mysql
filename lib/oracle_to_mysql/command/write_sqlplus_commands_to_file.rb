@@ -5,10 +5,15 @@ module OracleToMysql
       # Oracle and sqlplus is so finicky, this captures some of the errors I've come across,
       # it is not exhuastive
       def validate_otm_source_sql
+        the_source_sql = self.client_class.otm_source_sql
+
+        # last character minus white space must be a ";"
+        raise "otm_source_sql not terminated with a ';'" if the_source_sql.strip[-1..-1] != ';'
+  
         # Detect and prevent sqlplus from SP2-0027: Input is too long (> 2499 characters) - line ignored
-        self.client_class.otm_source_sql.each_line {|x| raise MaxLineExceeded.new("Ruby detection and prevention of Oracle error SP2-0027: Input is too long (> 2499 characters) - line ignored") if x.length > 2499}
+        the_source_sql.each_line {|x| raise MaxLineExceeded.new("Ruby detection and prevention of Oracle error SP2-0027: Input is too long (> 2499 characters) - line ignored") if x.length > 2499}
         
-        # other sqlplus CAVEATS
+        # other sqlplus CAVEATS (that could be programmed, TODO-ish)
         # If you're "IN" statements has more than 1000 elements, Oracle will barf out a ORA-01795 error
         # 
       end
@@ -16,8 +21,6 @@ module OracleToMysql
       
       def string_to_write_commands_file_name
         self.validate_otm_source_sql
-        # strip out an trailing ; or whitespace at the end...this sqlplus will barf otherwise or not-execute the command        
-        the_source_sql = self.client_class.otm_source_sql.gsub(/;\s*$/,'').strip 
         the_file_to_spool_output_to = self.client_class.otm_get_file_name_for(:oracle_output)
         return "
             WHENEVER SQLERROR EXIT 2;
@@ -34,7 +37,7 @@ module OracleToMysql
             SET TAB OFF;
             set linesize 2000;
             spool #{the_file_to_spool_output_to}
-            #{the_source_sql};
+            #{self.client_class.otm_source_sql}
             spool off;
             exit;          
             "      
