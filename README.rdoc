@@ -96,6 +96,13 @@ copy and populate from oracle_to_mysql.example.yml
 * New Features = let us know what yer thinkin, we might already be working on it
 
 == A few things we'd like to work on soon
-* retention policy of 0: don't keep yesterdays data
-* retention policy > 1: keep N table copies around
+* retention policy of 0: don't keep yesterdays data (aka don't make a *_old table in mysql)
+* retention policy > 1: keep N mysql table copies around
 * usage of a Logger object instead of stdout
+
+== Things we could use help on / Known Issues
+* Since source data is written to disk a tab delimintated file, if the source oracle data contains a \t character in might mess things up (none of our data has tabs so we haven't had problems)
+* Add validations/checks for stuff in validate_otm_source_sql in write_sqlplus_commands_to_file.rb if you encounter goofy sqlplus errors
+  Things that are not easily programmatically detectable ought just have an inline note i suppose
+
+

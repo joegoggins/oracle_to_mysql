@@ -61,6 +61,9 @@ module OracleToMysql
   #
   # x=OracleToMysql.get_and_bind_command(:write_sqlplus_commands_to_file, PsTermTbl.new)
   # x.execute
+  #
+  # or can access any other helper methods on x
+  #
   ###
   def self.get_and_bind_command(command_name,client_class)
     raise "invalid command name #{command_name}" unless self.command_name_to_class_hash.has_key?(command_name)
