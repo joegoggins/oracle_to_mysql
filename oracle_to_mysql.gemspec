@@ -9,17 +9,16 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joe Goggins", "Chris Dinger"]
-  s.date = %q{2010-10-29}
+  s.date = %q{2010-11-15}
   s.description = %q{Wraps the sqlplus binary and mysql binary does not currently require OCI8 or MySQL gems (might someday tho)}
   s.email = %q{joe.goggins@umn.edu}
   s.extra_rdoc_files = [
-    "LICENSE",
-     "README.rdoc"
+    "README.rdoc"
   ]
   s.files = [
     ".document",
      ".gitignore",
-     "LICENSE",
+     ".specification",
      "README.rdoc",
      "Rakefile",
      "VERSION",
@@ -35,6 +34,7 @@ Gem::Specification.new do |s|
      "lib/oracle_to_mysql/optional_override_instance_methods.rb",
      "lib/oracle_to_mysql/private_instance_methods.rb",
      "lib/oracle_to_mysql/protected_class_methods.rb",
+     "oracle_to_mysql.gemspec",
      "test/demo/ps_term_tbl.rb",
      "test/demo/ps_term_tbl_accumulative.rb",
      "test/demo/test_oracle_to_mysql_against_ps_term_tbl.rb",
@@ -62,11 +62,14 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<POpen4>, [">= 0.1.4"])
       s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     else
+      s.add_dependency(%q<POpen4>, [">= 0.1.4"])
       s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     end
   else
+    s.add_dependency(%q<POpen4>, [">= 0.1.4"])
     s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
   end
 end
