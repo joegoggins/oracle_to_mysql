@@ -109,4 +109,3 @@ test_files:
 - test/helper.rb
 - test/test_against_ps_term_tbl_accumulative.rb
 - test/test_oracle_to_mysql.rb
-

@@ -53,6 +53,12 @@ Will mirror the contents of otm_source_sql into the table created by otm_target_
 The "|| CHR(9) ||" crap is Oracle sql code that tab deliminates the column content in
 the spooled sqlplus SQL data output.  The Mysql "load data infile" command eats this output.
 
+If you are using with Rails, it expects database.yml to have oracle_source and mysql_target entries to get the
+db connect info, to override the names, see OptionalOverrideInstanceMethods#otm_config_file and #otm_source_config_hash or #otm_target_config_hash
+
+Also, will need to do:
+  gem install POpen4
+
 === Mirror Strategies
   :atomic_rename (Default)
     "load data infile" the spooled oracle tab deliminted data into a temp table first
