@@ -8,10 +8,8 @@ module OracleToMysql
         begin
           command.execute
         rescue OracleToMysql::CommandError => e
-          puts "TODO: SHOULD EMAIL SOMEONE OR SOMETHING, THE BUILD FAILED"
           raise e           
         rescue Exception => e
-          puts "TODO: CUSTOM EXCEPTION HANDLING FOR A PARTICULAR COMMAND MIGHT HAPPEN HERE..."
           raise e
         end        
       end

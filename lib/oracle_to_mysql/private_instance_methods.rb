@@ -60,7 +60,7 @@ module OracleToMysql
     # This generates a temp file suffixed with the specified x
     # it is used  
     def generate_tmp_file_name(x)
-      File.join(self.tmp_directory,"#{self.otm_target_table}_#{self.otm_timestamp.to_i}_#{x}")
+      File.join(self.tmp_directory,"#{self.otm_target_table}_#{self.otm_timestamp.to_i}_#{self.object_id}_#{Process.pid}_#{x}")
     end
     
     # Must pass an argument, retain_n is "the number tables old relative to the current table"
