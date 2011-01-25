@@ -4,6 +4,7 @@
 #   and http://popen4.rubyforge.org/
 #
 require 'popen4'
+require 'active_support'
 require 'oracle_to_mysql/protected_class_methods'
 require 'oracle_to_mysql/private_instance_methods'
 require 'oracle_to_mysql/must_override_instance_methods'
@@ -82,8 +83,6 @@ end
 
 # HERE THE BUILDER STUFF IS, and
 
-require 'oracle_to_mysql/monkey_patches'
-Array.send(:include, OracleToMysql::MonkeyPatches::Array)
 require 'oracle_to_mysql/builder'
 
 

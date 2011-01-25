@@ -1,12 +1,15 @@
 class OracleToMysql::Builder::BaseTree
-  attr_accessor :name, :block_mode, :trees, :args
+  attr_accessor :name, :mode, :trees, :args
 
-  def initialize(*args)
+  def initialize(*args,&block)
     options = args.extract_options!
-    @args = args
+    @args = args || []
     @name = options[:name] || nil
-    @block_mode = options[:block_mode] || nil
+    @mode = options[:mode] || :linear  # can be :parallel or :linear
     @trees = []
+    if block_given?
+      yield self
+    end      
   end
   
   def execute
