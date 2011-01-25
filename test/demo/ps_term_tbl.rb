@@ -27,7 +27,7 @@ class PsTermTbl
       case when SSR_PLNDISPONLY_DT is null then '\\N' else to_char(SSR_PLNDISPONLY_DT, 'YYYY-MM-DD') end                || CHR(9) ||
       case when SSR_SSENRLAVAIL_DT is null then '\\N' else to_char(SSR_SSENRLAVAIL_DT, 'YYYY-MM-DD') end                || CHR(9)
     from ps_term_tbl
-    where institution='UMNTC'"
+    where institution='UMNTC';"
   end
   def otm_target_sql
     "
