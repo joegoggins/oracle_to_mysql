@@ -17,6 +17,7 @@ require 'oracle_to_mysql/command/fork_and_execute_sqlplus_command.rb'
 require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file.rb'
 require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file_in_replace_mode.rb'
 require 'oracle_to_mysql/command/delete_temp_files.rb'
+
 module OracleToMysql
   class CommandError < Exception; end
   # used to join the table and timestamp for old retained tables if :n > 1, or if :n = 1 its simply the suffix of the table name
@@ -78,3 +79,12 @@ module OracleToMysql
   def self.tns_string_from_config(config_hash)      "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=#{config_hash['host']})(PORT=#{config_hash['port']})))(CONNECT_DATA=(SERVICE_NAME=#{config_hash['database']})))"
   end  
 end
+
+# HERE THE BUILDER STUFF IS, and
+
+require 'oracle_to_mysql/monkey_patches'
+Array.send(:include, OracleToMysql::MonkeyPatches::Array)
+require 'oracle_to_mysql/builder'
+
+
+

@@ -44,8 +44,6 @@ z.trees << OracleToMysql::Builder::RakeTree.new("after_program_plan_subplan_mirr
 
 
 
-# IMPLEMENTATION BEGINNINGS
-class 
 
 
 OracleToMysql::Builder.trees << 
