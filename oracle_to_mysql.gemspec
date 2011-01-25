@@ -21,22 +21,14 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "doc/scraps/builder_brainstorm.txt",
     "lib/oracle_to_mysql.rb",
     "lib/oracle_to_mysql/api_instance_methods.rb",
-    "lib/oracle_to_mysql/builder.rb",
-    "lib/oracle_to_mysql/builder/base_tree.rb",
-    "lib/oracle_to_mysql/builder/between_tree.rb",
-    "lib/oracle_to_mysql/builder/build_tree.rb",
-    "lib/oracle_to_mysql/builder/rake_tree.rb",
     "lib/oracle_to_mysql/command.rb",
     "lib/oracle_to_mysql/command/delete_temp_files.rb",
     "lib/oracle_to_mysql/command/fork_and_execute_sqlplus_command.rb",
     "lib/oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file.rb",
     "lib/oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file_in_replace_mode.rb",
     "lib/oracle_to_mysql/command/write_sqlplus_commands_to_file.rb",
-    "lib/oracle_to_mysql/monkey_patches.rb",
-    "lib/oracle_to_mysql/monkey_patches/array.rb",
     "lib/oracle_to_mysql/must_override_instance_methods.rb",
     "lib/oracle_to_mysql/optional_override_instance_methods.rb",
     "lib/oracle_to_mysql/private_instance_methods.rb",
@@ -44,7 +36,6 @@ Gem::Specification.new do |s|
     "oracle_to_mysql.gemspec",
     "test/demo/ps_term_tbl.rb",
     "test/demo/ps_term_tbl_accumulative.rb",
-    "test/demo/test_builder_api.rb",
     "test/demo/test_oracle_to_mysql_against_ps_term_tbl.rb",
     "test/helper.rb",
     "test/oracle_to_mysql.example.yml",
@@ -56,11 +47,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.4.1}
   s.summary = %q{A gem for mirroring data from an oracle db to a mysql db}
   s.test_files = [
-    "test/demo/otm/ps/academic_program.rb",
-    "test/demo/otm/ps/academic_program_membership.rb",
     "test/demo/ps_term_tbl.rb",
     "test/demo/ps_term_tbl_accumulative.rb",
-    "test/demo/test_builder_api.rb",
     "test/demo/test_oracle_to_mysql_against_ps_term_tbl.rb",
     "test/helper.rb",
     "test/test_against_ps_term_tbl_accumulative.rb",
@@ -72,16 +60,13 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<POpen4>, [">= 0"])
-      s.add_runtime_dependency(%q<activesupport>, [">= 2.3.5"])
       s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     else
       s.add_dependency(%q<POpen4>, [">= 0"])
-      s.add_dependency(%q<activesupport>, [">= 2.3.5"])
       s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     end
   else
     s.add_dependency(%q<POpen4>, [">= 0"])
-    s.add_dependency(%q<activesupport>, [">= 2.3.5"])
     s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
   end
 end
