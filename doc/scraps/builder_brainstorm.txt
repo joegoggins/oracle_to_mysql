@@ -1,0 +1,175 @@
+# linear blocks function like linear state machines,
+# if any sub-block fails none of the next steps are executed
+
+# All of the exception handling is done within the mirroring class,
+# not here
+OracleToMysql::Builder.between(0,0,7,30, :name => :academic_tree_paths, :block_mode => :linear) do |b2|
+  b2.build(:block_mode => :parallel) do |b3|
+    b3.build("Otm::Ps::AcademicProgram")
+    b3.build("Otm::Ps::AcademicProgramMembership")
+    b3.build("Otm::Ps::AcademicPlan")
+    b3.build("Otm::Ps::AcademicPlanMembership")
+    b3.build("Otm::Ps::AcademicSubPlan")
+    b3.build("Otm::Ps::AcademicPlanMembership")
+  end    
+  b2.rake("after_program_plan_subplan_mirrored_build_academic_tree_paths")
+end
+
+# If :block_mode is specified, then the function expects a block
+# if a block is given without this param, an error is thrown
+
+
+# To implement
+
+# build the inner most parallel tree
+x = []
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgram")
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgramMembership")
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicPlan")
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicPlanMembership")
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicSubPlan")
+x << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicPlanMembership")
+y = OracleToMysql::Builder::BuildTree.new(:block_mode => :parallel)
+y.trees += x
+
+
+# build the linear between tree
+z = OracleToMysql::Builder.BetweenTree.new(0,0,7,30,
+  :name => :academic_tree_paths, 
+  :block_mode => :linear
+)
+
+z.trees << y
+z.trees << OracleToMysql::Builder::RakeTree.new("after_program_plan_subplan_mirrored_build_academic_tree_paths")
+
+
+
+# IMPLEMENTATION BEGINNINGS
+class 
+
+
+OracleToMysql::Builder.trees << 
+OracleToMysql::Builder::BuildTree < BaseTree
+OracleToMysql::Builder::RakeTree < BaseTree
+OracleToMysql::Builder::BetweenTree < BaseTree
+
+
+
+
+###### CONSOLE USAGE
+
+# Build just the academic_program table
+OracleToMysql::Builder.trees[0].trees[0].trees[0].trees[0].execute
+                             -> tree(:academic_tree_paths)
+                                      -> b1.between(0,0,7,30, :block_mode => :linear)
+                                               -> b2.build(:block_mode => :parallel)
+                                                        -> b3.build("Otm::Ps::AcademicProgram")
+                                                        
+
+# Or if called like b3.build("Otm::Ps::AcademicProgram", :name => :acad_prog)
+# then you could do...this would be how the rake task would be wrapped
+OracleToMysql::Builder.named_tree(:academic_tree_paths, :acad_prog).execute                                                                                                                
+
+
+# RAKE USAGE
+rake oracle_to_mysql:builder:execute_tree tree=academic_tree_paths name=acad_prog
+
+
+THE PUBLIC API.
+  .build
+  .rake
+  .between
+
+  .trees
+    an array of trees
+    
+  .named_trees(*tree_names)
+    WAIT on implementing this, its tricky, because some trees are named and some are not.
+  
+OracleToMysql::Builder::Tree.new
+  the low level namespace that all the other methods call
+
+
+####### CLASSES
+OracleToMysql::Builder::BaseTree
+OracleToMysql::Builder::BuildTree < BaseTree
+OracleToMysql::Builder::RakeTree < BaseTree
+OracleToMysql::Builder::BetweenTree < BaseTree
+
+
+
+
+
+===== SCRAP CODE
+def build(*args)
+  options = args.extract_options!
+  puts options.inspect
+  puts args.inspect
+end
+
+
+
+-----------------------------
+== Purpose
+This application is a designed to facilitate the nightly build.
+It assumes the load schedule is relatively static.
+
+It must allow arbitrary ordering, and dependencies of table building.
+It should copy the dars_batch_client's polling mechanism
+It should allow for parallelization of table mirroring
+
+
+== Todos
+Install Monit on elephant.
+
+== Scheduling Ideas
+  *
+  * Every N seconds we check for work.
+  
+
+== Configuration Ideas
+
+---
+Here's one way it could work, this code would be defined in an initializer
+
+  OtmBuilder.configure do |config|
+    config.between(0,0,7,30) do |nightly_build|
+      begin
+        nightly_build.build "Otm::Ps::AcademicProgram", 
+          "Otm::Ps::AcademicProgramMembership",
+          "Otm::Ps::AcademicPlan",
+          "Otm::Ps::AcademicPlanMembership",
+          "Otm::Ps::AcademicSubPlan",
+          "Otm::Ps::AcademicPlanMembership" do |afterwords|          
+          afterwords.rake("after_program_plan_subplan_mirrored_build_academic_tree_paths")
+        end
+      rescue SomeCrazyCustomException => e
+        # notify the president of the united states
+      end
+    end
+  end
+
+This says, "between midnight and 7:30am, in linear order, mirror program, plan, etc.  When finished fork a child process to build the academic tree pathes table".
+
+You could imagine having a 'nightly_build.build_in_parallel' method instead of the 'nightly_build.build' method.
+
+The exception handling would allow for special error handling & specific notification depending for any arbitrary 
+block of code.
+
+---
+Core config methods available in the:
+  .between(hh,mm,hh,mm)
+    Sets the earliest hour and minute, and latest hour and minute for which the work
+    in the block can occur
+             
+  .build(*array_of_otm_class_names)
+    Given an array of classes that "include OracleToMysql", invoke the .otm_execute (aka mirror method)
+    in that order, then yield to the block if specified
+                          
+  .build_in_parallel(*array_of_otm_class_names)
+    Just like .build, but forks independent child processes to instead of blocking/executing
+    things linearly, then once all items in the array complete, yield to the block.
+    
+  .rake(rake_task_name)
+    Fork a child process with that rake task name, this is a blocking fork...aka, the next command would wait
+    for this to finish.  When complete, yield to the block if given.
