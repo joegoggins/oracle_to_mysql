@@ -1,3 +1,11 @@
+# How should the Poller interact with this
+
+Every 5 minutes, we'll hit this task
+
+
+rake oracle_to_mysql:builder:check_for_work
+
+
 # linear blocks function like linear state machines,
 # if any sub-block fails none of the next steps are executed
 

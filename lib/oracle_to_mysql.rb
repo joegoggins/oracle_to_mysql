@@ -4,7 +4,6 @@
 #   and http://popen4.rubyforge.org/
 #
 require 'popen4'
-require 'active_support'
 require 'oracle_to_mysql/protected_class_methods'
 require 'oracle_to_mysql/private_instance_methods'
 require 'oracle_to_mysql/must_override_instance_methods'
@@ -80,10 +79,3 @@ module OracleToMysql
   def self.tns_string_from_config(config_hash)      "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=#{config_hash['host']})(PORT=#{config_hash['port']})))(CONNECT_DATA=(SERVICE_NAME=#{config_hash['database']})))"
   end  
 end
-
-# HERE THE BUILDER STUFF IS, and
-
-require 'oracle_to_mysql/builder'
-
-
-

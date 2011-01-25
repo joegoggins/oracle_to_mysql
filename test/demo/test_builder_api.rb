@@ -6,17 +6,32 @@ require 'helper'
 require 'otm/ps/academic_program'
 require 'otm/ps/academic_program_membership'
 class TestBuilderApi < Test::Unit::TestCase
+
+
+  context "Builder.configure, with DSL" do
+    should "function" do
+      OracleToMysql::Builder.configure do |config|
+        config.build("Otm::Ps::AcademicProgram")
+        config.build("Otm::Ps::AcademicProgramMembership")
+      end
+      assert_kind_of(OracleToMysql::Builder::NamespaceTree, OracleToMysql::Builder.root_tree)
+      assert_equal(OracleToMysql::Builder.root_tree.name, :root_tree)
+      assert_equal(OracleToMysql::Builder.root_tree.trees[0].args[0], "Otm::Ps::AcademicProgram")            
+      assert_equal(OracleToMysql::Builder.root_tree.trees[1].args[0], "Otm::Ps::AcademicProgramMembership")            
+    end
+  end  
+  
   context "Academic tree pathes basic linear BuildTree use case without DSL" do
     should "function" do
-      @bt = OracleToMysql::Builder::BuildTree.new do |parallel_build_tree|
-        parallel_build_tree.trees << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgram")
-        parallel_build_tree.trees << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgramMembership")
+      @bt = OracleToMysql::Builder::BuildTree.new do |bt|
+        bt.trees << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgram")
+        bt.trees << OracleToMysql::Builder::BuildTree.new("Otm::Ps::AcademicProgramMembership")
       end
       assert_equal(@bt.mode, :linear, "The default mode is linear is unspecified")
       assert_kind_of(Array,@bt.args)
       assert_equal(@bt.trees[0].args[0], "Otm::Ps::AcademicProgram")            
       assert_equal(@bt.trees[1].args[0], "Otm::Ps::AcademicProgramMembership")
-      @bt.execute
+      # @bt.execute
     end
   end
   context "Be able to run .otm_execute on demo classes" do
