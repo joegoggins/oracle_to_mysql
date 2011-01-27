@@ -52,7 +52,6 @@ module OracleToMysql
       :fork_and_execute_sqlplus_commands_file => OracleToMysql::Command::ForkAndExecuteSqlplusCommand,
       :write_and_execute_mysql_commands_to_bash_file => OracleToMysql::Command::WriteAndExecuteMysqlCommandsToBashFile,
       :write_and_execute_mysql_commands_to_bash_file_in_replace_mode => OracleToMysql::Command::WriteAndExecuteMysqlCommandsToBashFileInReplaceMode,
-      # TODO pack-keys and optimize table
       :delete_temp_files => OracleToMysql::Command::DeleteTempFiles
     }      
   end

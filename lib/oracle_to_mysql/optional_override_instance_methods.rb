@@ -18,6 +18,17 @@ module OracleToMysql
       @otm_retain_options
     end
     
+    # This results in mysql queries executing afterwords that optimize the table
+    # and get it set for prime time usage...
+    #
+    def otm_post_mirror_options
+      if @otm_post_mirror_options.nil?
+        @otm_post_mirror_options = self.class.otm_default_post_mirror_options
+      end
+      @otm_post_mirror_options      
+    end
+    
+    
     def otm_source_config_hash
       if self.otm_config_hash.has_key?('oracle_source')
         return otm_config_hash['oracle_source']

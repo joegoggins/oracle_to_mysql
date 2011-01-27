@@ -7,7 +7,8 @@ module OracleToMysql
         [:execute_otm_target_sql,
          :drop_expired_retained_tables,   # defined in parent
          :retention_policy_create_and_populate_tables,
-         :load_data_infile                # overridden in this class
+         :load_data_infile,                # overridden in this class
+         # TODO reflect post mirror options
         ]
       end
       

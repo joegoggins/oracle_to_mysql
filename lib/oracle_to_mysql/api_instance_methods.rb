@@ -29,9 +29,7 @@ module OracleToMysql
     def otm_get_file_name_for(sym)
       f = self.generate_tmp_file_name(sym)
       case sym
-      when :mysql_commands    
-        "#{f}.sql"
-      when :oracle_commands
+      when :mysql_commands, :oracle_commands
         "#{f}.sql"   # sqlplus is such a jackass, the file name must end in .sql for it to work, fyi
       when :oracle_output
         "#{f}.txt"

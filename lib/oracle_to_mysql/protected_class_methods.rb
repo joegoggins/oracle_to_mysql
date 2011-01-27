@@ -1,5 +1,8 @@
 module OracleToMysql
-  module ProtectedClassMethods    
+  module ProtectedClassMethods
+    def otm_default_post_mirror_options
+      {:optimize_table => true}
+    end    
     def otm_default_strategy
       :atomic_rename        # can also be :accumulative
     end
