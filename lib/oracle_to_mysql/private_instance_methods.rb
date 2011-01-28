@@ -7,10 +7,6 @@ module OracleToMysql
       @otm_strategy_options = options
     end
     
-    # LOGGING FUNCTIONS BEGIN
-    def otm_output(msg)
-      puts "[#{self.to_s}]#{msg}"
-    end    
     def otm_started(msg)      
       self.otm_output("[started t=#{self.otm_time_elapsed_since_otm_timestamp}]#{msg}")
     end    

@@ -27,7 +27,10 @@ module OracleToMysql
       end
       @otm_post_mirror_options      
     end
-    
+        
+    def otm_output(msg)
+      puts "[#{self.to_s}]#{msg}"
+    end        
     
     def otm_source_config_hash
       if self.otm_config_hash.has_key?('oracle_source')
