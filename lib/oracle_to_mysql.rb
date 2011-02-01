@@ -102,7 +102,7 @@ module OracleToMysql
       unless self.otm_source_config_hash.kind_of?(Hash)
         raise NoOracleConfigSpecified.new("[.otm_verify_confg][otm_source_config_hash not a hash]")
       end
-      %w(username password host database port).each do |k|
+      %w(username password host database).each do |k|
         if self.otm_target_config_hash[k].nil?
           raise NoMysqlConfigSpecified.new("[.otm_verify_confg][missing key #{k} in hash]")
         end
@@ -372,6 +372,10 @@ module OracleToMysql
   # once again, sqlplus the jackass needs a "TNS string" to connect to it's stankin ass
   # this interpolates crap from a config hash, like host and port and database into it
   #
-  def self.tns_string_from_config(config_hash)      "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=#{config_hash['host']})(PORT=#{config_hash['port']})))(CONNECT_DATA=(SERVICE_NAME=#{config_hash['database']})))"
+  def self.tns_string_from_config(config_hash)     
+    if config_hash['port'].nil?
+      config_hash['port'] = 1521 # default oracle port
+    end
+      "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=#{config_hash['host']})(PORT=#{config_hash['port']})))(CONNECT_DATA=(SERVICE_NAME=#{config_hash['database']})))"
   end  
 end
