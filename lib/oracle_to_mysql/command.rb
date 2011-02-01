@@ -1,28 +1,28 @@
 class OracleToMysql::Command
   attr_accessor :client_class
   def info(msg)
-    self.output("[info] #{msg}")
+    self.output("[info] #{msg}",:classification => :good)
   end
   def error(msg)
-    self.output("[ERROR] #{msg}")
+    self.output("[ERROR] #{msg}", :classification => :bad)
     raise OracleToMysql::CommandError.new("#{self.client_class.to_s}#otm_execute died on command=#{self.class.to_s}")
   end
   def warn(msg)
-    self.output("[WARN] #{msg}")
+    self.output("[WARN] #{msg}", :classification => :good_w_warning)
   end
 
   def started(msg='')
-    self.output("[started t=#{self.client_class.otm_time_elapsed_since_otm_timestamp}]#{msg}")
+    self.output("[started t=#{self.client_class.otm_time_elapsed_since_otm_timestamp}]#{msg}", :classification => :good_started)
   end
   
   def finished(msg='')
-    self.output("[finished t=#{self.client_class.otm_time_elapsed_since_otm_timestamp}]#{msg}")
+    self.output("[finished t=#{self.client_class.otm_time_elapsed_since_otm_timestamp}]#{msg}",:classification => :good_started)
   end
 
   # USE THE ones above if possible, it makes the output more uniform and easier to read/parse
   # Stuff funnels to here, which propogates up to the client class
-  def output(msg)
-    self.client_class.otm_output("[#{self.class.to_s}]#{msg}")
+  def output(msg, options={})
+    self.client_class.otm_output("[#{self.class.to_s}]#{msg}",options)
   end
      
   # Client classes call this method     

@@ -148,7 +148,10 @@ module OracleToMysql
       @otm_post_mirror_options      
     end
         
-    def otm_output(msg)
+    # The options hash can contain :classification => <SYMBOL> which can be used
+    # when overriding otm_output
+    #
+    def otm_output(msg, options={})
       puts "[#{self.to_s}]#{msg}"
     end        
     
