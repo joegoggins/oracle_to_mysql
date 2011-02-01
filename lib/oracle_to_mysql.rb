@@ -4,11 +4,6 @@
 #   and http://popen4.rubyforge.org/
 #
 require 'popen4'
-# require 'oracle_to_mysql/protected_class_methods'
-# require 'oracle_to_mysql/private_instance_methods'
-# require 'oracle_to_mysql/must_override_instance_methods'
-# require 'oracle_to_mysql/optional_override_instance_methods'
-# require 'oracle_to_mysql/api_instance_methods'
 
 # These commands are used internally to actuall do the work
 require 'oracle_to_mysql/command'
@@ -20,6 +15,9 @@ require 'oracle_to_mysql/command/delete_temp_files.rb'
 
 module OracleToMysql
   class CommandError < Exception; end
+  class MustOverrideMethod < Exception; end
+  class NoMysqlConfigSpecified < Exception; end
+  class NoOracleConfigSpecified < Exception; end
   # used to join the table and timestamp for old retained tables if :n > 1, or if :n = 1 its simply the suffix of the table name
   OTM_RETAIN_KEY = '_old' 
   OTM_VALID_STRATEGIES = [:accumulative, :atomic_rename]
@@ -97,7 +95,23 @@ module OracleToMysql
       end
     end
     
-  end
+    def otm_verify_config
+      unless self.otm_target_config_hash.kind_of?(Hash)
+        raise NoMysqlConfigSpecified.new("[.otm_verify_confg][otm_target_config_hash not a hash]")
+      end
+      unless self.otm_source_config_hash.kind_of?(Hash)
+        raise NoOracleConfigSpecified.new("[.otm_verify_confg][otm_source_config_hash not a hash]")
+      end
+      %w(username password host database port).each do |k|
+        if self.otm_target_config_hash[k].nil?
+          raise NoMysqlConfigSpecified.new("[.otm_verify_confg][missing key #{k} in hash]")
+        end
+        if self.otm_source_config_hash[k].nil?
+          raise NoOracleConfigSpecified.new("[.otm_verify_confg][missing key #{k} in hash]")
+        end
+      end
+    end
+  end  # PrivateInstanceMethods
   
   module ProtectedClassMethods
     def otm_default_post_mirror_options
@@ -159,14 +173,15 @@ module OracleToMysql
       if self.otm_config_hash.has_key?('oracle_source')
         return otm_config_hash['oracle_source']
       else
-        raise "Could not find oracle_source key in config file #{self.otm_config_file}, you should override this method"
+        raise NoOracleConfigSpecified.new("You should either add a oracle_source entry to #{self.otm_config_file} or override otm_source_config_hash")
       end
     end
+    
     def otm_target_config_hash
       if self.otm_config_hash.has_key?('mysql_target')
         return otm_config_hash['mysql_target']
-      else
-        raise "Could not find mysql_target key in config file #{self.otm_config_file}, you should override this method"
+      else        
+        raise NoMysqlConfigSpecified.new("You should either add a mysql_target entry to #{self.otm_config_file} or override otm_target_config_hash")
       end      
     end
     
@@ -202,19 +217,20 @@ module OracleToMysql
   
   module MustOverrideInstanceMethods    
     def otm_source_sql
-      raise "YOU MUST OVERRIDE THIS"
+      raise MustOverrideMethod.new("must override otm_source_sql, this is the oracle sql")
     end
     def otm_target_sql
-      raise "YOU MUST OVERRIDE THIS"
+      raise MustOverrideMethod.new("must override otm_target_sql, this is the create table mysql statement")
     end
     def otm_target_table
-      raise "YOU MUST OVERRIDE THIS"
+      raise MustOverrideMethod.new("must override otm_target_table, this is the final mysql table name of the mysql target ")
     end  
   end
   
   
   module ApiInstanceMethods
     def otm_execute
+      self.otm_verify_config      
       self.otm_output("[started at #{self.otm_timestamp}]")
       self.otm_started("#otm_execute (in #{self.otm_strategy.to_s} mode, retain_n = #{self.otm_retain_options[:n]}")
       self.otm_execute_command_names.each do |command_name|
