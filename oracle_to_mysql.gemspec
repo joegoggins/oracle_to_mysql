@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joe Goggins", "Chris Dinger"]
-  s.date = %q{2011-01-25}
+  s.date = %q{2011-02-28}
   s.description = %q{Wraps the sqlplus binary and mysql binary does not currently require OCI8 or MySQL gems (might someday tho)}
   s.email = %q{joe.goggins@umn.edu}
   s.extra_rdoc_files = [
@@ -22,17 +22,12 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/oracle_to_mysql.rb",
-    "lib/oracle_to_mysql/api_instance_methods.rb",
     "lib/oracle_to_mysql/command.rb",
     "lib/oracle_to_mysql/command/delete_temp_files.rb",
     "lib/oracle_to_mysql/command/fork_and_execute_sqlplus_command.rb",
     "lib/oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file.rb",
     "lib/oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file_in_replace_mode.rb",
     "lib/oracle_to_mysql/command/write_sqlplus_commands_to_file.rb",
-    "lib/oracle_to_mysql/must_override_instance_methods.rb",
-    "lib/oracle_to_mysql/optional_override_instance_methods.rb",
-    "lib/oracle_to_mysql/private_instance_methods.rb",
-    "lib/oracle_to_mysql/protected_class_methods.rb",
     "oracle_to_mysql.gemspec",
     "test/demo/ps_term_tbl.rb",
     "test/demo/ps_term_tbl_accumulative.rb",
