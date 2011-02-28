@@ -5,6 +5,10 @@
 #
 require 'popen4'
 
+# This is a temporary thing so we can develop against this lib rather than depend on it as a gem
+# 
+require File.join(File.dirname(__FILE__),'..','vendor','table_namer','lib','table_namer')
+
 # These commands are used internally to actuall do the work
 require 'oracle_to_mysql/command'
 require 'oracle_to_mysql/command/write_sqlplus_commands_to_file'
