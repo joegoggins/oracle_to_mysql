@@ -190,7 +190,7 @@ module OracleToMysql
     def otm_table_namer
       # Its important that this only instantiates once, so the dates/timestamps are consistent
       if @otm_table_namer.nil?
-        @otm_table_namer = TableNamer.new(self.otm_target_table, :now => self.otm_timestamp)
+        @otm_table_namer = OracleToMysql::TableNamer.new(self.otm_target_table, :now => self.otm_timestamp)
       end
       @otm_table_namer
     end
