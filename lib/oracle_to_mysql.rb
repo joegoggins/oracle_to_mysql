@@ -13,6 +13,10 @@ require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file.r
 require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file_in_replace_mode.rb'
 require 'oracle_to_mysql/command/delete_temp_files.rb'
 
+
+# a tool to help with referencing old tables and reflecting the retention strategy
+#
+require 'oracle_to_mysql/table_namer'
 module OracleToMysql
   class CommandError < Exception; end
   class MustOverrideMethod < Exception; end
@@ -89,6 +93,7 @@ module OracleToMysql
     #
     def otm_retained_target_table(retain_n)
       if retain_n == 1
+        
         "#{self.otm_target_table}#{OTM_RETAIN_KEY}"
       else
         raise "TODO: HAVE NOT DEALT WITH n != 1 retain option"
@@ -204,12 +209,14 @@ module OracleToMysql
       end
     end  
     
-    # This is the table name that is created first on the server for the :atomic_rename strategy
-    #
-    def otm_temp_target_table
-      "#{self.otm_target_table}_#{self.otm_timestamp.to_i}_temp"
+    def otm_table_namer
+      # Its important that this only instantiates once, so the dates/timestamps are consistent
+      if @otm_table_namer.nil?
+        @otm_table_namer = TableNamer.new(self.otm_target_table, :now => self.otm_timestamp)
+      end
+      @otm_table_namer
     end
-    
+
     def tmp_directory
       "/tmp"  
     end                                       

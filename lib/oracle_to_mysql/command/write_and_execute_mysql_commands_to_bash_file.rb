@@ -24,7 +24,7 @@ module OracleToMysql
         self.client_class.otm_target_sql
       end
 
-      # The client class should not have to know about otm_temp_target_table
+      # The client class should not have to know about otm_table_namer.temp
       # this overrides it just for this instance so the otm_target_sql
       # gets the temp table name interpolated into it instead of the actual
       # this is done this way to support the non-atomic rename strategy as well (which does not create a temp table)
@@ -33,7 +33,7 @@ module OracleToMysql
         the_modded_client_class_inst = self.client_class.clone
         the_modded_client_class_inst.instance_eval(<<-EOS, __FILE__,__LINE__)
           def otm_target_table
-            "#{self.client_class.otm_temp_target_table}"
+            "#{self.client_class.otm_table_namer.temp}"
           end
         EOS
         the_modded_client_class_inst.otm_target_sql
@@ -42,7 +42,7 @@ module OracleToMysql
       def load_data_infile
         "-- Rip through the oracle output data and insert into mysql
          load data local infile '#{self.client_class.otm_get_file_name_for(:oracle_output)}' 
-         into table #{self.client_class.otm_temp_target_table}
+         into table #{self.client_class.otm_table_namer.temp}
          fields terminated by '\\t'
          lines terminated by '\\n'
         "
@@ -52,7 +52,7 @@ module OracleToMysql
         # If this is the first run, the destination table won't exist yet.  If that's the 
         # case, create an empty table so the atomic rename works
         "create table if not exists #{self.client_class.otm_target_table} 
-         select * from #{self.client_class.otm_temp_target_table} where 1=0"
+         select * from #{self.client_class.otm_table_namer.temp} where 1=0"
       end
       
       def drop_expired_retained_tables
@@ -63,7 +63,7 @@ module OracleToMysql
       def reflect_post_mirror_option_to_optimize_table
         s = ''
         if self.client_class.otm_post_mirror_options[:optimize_table]
-          s << "OPTIMIZE TABLE #{self.client_class.otm_temp_target_table}"
+          s << "OPTIMIZE TABLE #{self.client_class.otm_table_namer.temp}"
         end
         s
       end
@@ -72,12 +72,7 @@ module OracleToMysql
         raise "TODO: not implemented yet for retention :n != 1" if tables_to_retain != 1
         "RENAME table 
           #{self.client_class.otm_target_table} TO #{self.client_class.otm_retained_target_table(tables_to_retain)}, 
-          #{self.client_class.otm_temp_target_table} TO #{self.client_class.otm_target_table}"
-        # rename table #{self.otm_retained_target_table}
-        # 
-        # 
-        # #{self.client_class.otm_target_table} to #{self.client_class.otm_target_table}_old, #{self.client_class.otm_temp_target_table} to #{self.client_class.otm_target_table};
-        # 
+          #{self.client_class.otm_table_namer.temp} TO #{self.client_class.otm_target_table}"
       end
       
       
