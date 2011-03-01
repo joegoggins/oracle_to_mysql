@@ -2,17 +2,13 @@ module OracleToMysql
   class Command
     class WriteAndExecuteMysqlCommandsToBashFile < OracleToMysql::Command
 
-      def tables_to_retain
-        self.client_class.otm_retain_options[:n]
-      end
-      
       # Done this way so the child, _in_replace_mode, can override this
       #
       def mysql_command_order
         [:execute_otm_target_sql,
          :execute_temp_file_modded_otm_target_sql,
          :load_data_infile,        
-         :drop_expired_retained_tables,
+         :drop_yesterdays_table,
          :reflect_post_mirror_option_to_optimize_table,
          :perform_atomic_rename_of_tables
         ]
@@ -55,7 +51,7 @@ module OracleToMysql
          select * from #{self.client_class.otm_table_namer.temp} where 1=0"
       end
       
-      def drop_expired_retained_tables
+      def drop_yesterdays_table
         "drop table if exists #{self.client_class.otm_table_namer.yesterday}"
       end
       

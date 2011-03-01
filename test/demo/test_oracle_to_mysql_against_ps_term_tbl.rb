@@ -21,11 +21,6 @@ class TestOracleToMysql < Test::Unit::TestCase
       assert_equal(@ps_term_tbl_inst.otm_strategy, :atomic_rename)
     end
     
-    should "Have default otm_retain_options" do
-      retain_options = @ps_term_tbl_inst.otm_retain_options
-      assert(retain_options.has_key?(:n))
-    end
-    
     should "be able to invoke otm_execute" do
       @ps_term_tbl_inst.otm_execute
     end

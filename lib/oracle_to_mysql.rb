@@ -12,11 +12,15 @@ require 'oracle_to_mysql/command/fork_and_execute_sqlplus_command.rb'
 require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file.rb'
 require 'oracle_to_mysql/command/write_and_execute_mysql_commands_to_bash_file_in_replace_mode.rb'
 require 'oracle_to_mysql/command/delete_temp_files.rb'
-
+require 'oracle_to_mysql/command/drop_old_tables.rb'
 
 # a tool to help with referencing old tables and reflecting the retention strategy
 #
 require 'oracle_to_mysql/table_namer'
+
+# Unfortunately, to drop old tables we need to make a ruby mysql connection because mysql does not
+# have a "DROP TABLES like command"
+require 'mysql'
 module OracleToMysql
   class CommandError < Exception; end
   class MustOverrideMethod < Exception; end
@@ -75,7 +79,11 @@ module OracleToMysql
         end
         
         ## All strategies should cleanup after themselves lastly
-        @otm_execute_command_names << :delete_temp_files
+        if ENV['OTM_NO_DELETE_TEMP_FILES'].nil?
+          @otm_execute_command_names << :delete_temp_files
+        end
+
+        @otm_execute_command_names << :drop_old_tables
       end
       @otm_execute_command_names                  
     end         
@@ -123,13 +131,8 @@ module OracleToMysql
       @otm_strategy      
     end
               
-    # TO CHANGE the retain options, override this method
-    #    
-    def otm_retain_options
-      if @otm_retain_options.nil?
-        @otm_retain_options = {:n => 1} 
-      end
-      @otm_retain_options
+    def otm_number_of_tables_to_retain
+      1
     end
     
     # This results in mysql queries executing afterwords that optimize the table
@@ -146,7 +149,7 @@ module OracleToMysql
     # when overriding otm_output
     #
     def otm_output(msg, options={})
-      puts "[#{self.to_s}]#{msg}"
+      puts "[#{Time.now.to_s}][#{self.to_s}]#{msg}"
     end        
     
     def otm_source_config_hash
@@ -214,7 +217,7 @@ module OracleToMysql
     def otm_execute
       self.otm_verify_config      
       self.otm_output("[started at #{self.otm_timestamp}]")
-      self.otm_started("#otm_execute (in #{self.otm_strategy.to_s} mode, retain_n = #{self.otm_retain_options[:n]}")
+      self.otm_started("#otm_execute (in #{self.otm_strategy.to_s} mode, retain_n = #{self.otm_number_of_tables_to_retain}")
       self.otm_execute_command_names.each do |command_name|
         command = OracleToMysql.get_and_bind_command(command_name, self)
         begin
@@ -317,7 +320,9 @@ module OracleToMysql
       :fork_and_execute_sqlplus_commands_file => OracleToMysql::Command::ForkAndExecuteSqlplusCommand,
       :write_and_execute_mysql_commands_to_bash_file => OracleToMysql::Command::WriteAndExecuteMysqlCommandsToBashFile,
       :write_and_execute_mysql_commands_to_bash_file_in_replace_mode => OracleToMysql::Command::WriteAndExecuteMysqlCommandsToBashFileInReplaceMode,
-      :delete_temp_files => OracleToMysql::Command::DeleteTempFiles
+      :delete_temp_files => OracleToMysql::Command::DeleteTempFiles,
+      :drop_old_tables => OracleToMysql::Command::DropOldTables
+
     }      
   end
   

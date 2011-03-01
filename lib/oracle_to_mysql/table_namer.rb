@@ -16,6 +16,23 @@ class TableNamer
     tt=self.now.to_i
     "temp_#{tt}_#{self.table_name}"
   end
+
+  def old_table_sql_like_wildcard
+    "old_%_#{self.table_name}"
+  end
+
+  # list old tables, newest first
+  def sql_for_old_tables(schema)
+    "
+    SELECT 
+       table_name 
+     FROM information_schema.tables 
+     WHERE 
+       table_name LIKE '#{old_table_sql_like_wildcard}' 
+       AND table_schema = '#{schema}'
+     ORDER BY table_name DESC
+    "
+  end 
 end
 
 # module TableNamer
