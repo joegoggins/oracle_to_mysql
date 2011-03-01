@@ -1,3 +1,0 @@
-[submodule "vendor/table_namer"]
-	path = vendor/table_namer
-	url = git@git.asr.umn.edu:table_namer.git
