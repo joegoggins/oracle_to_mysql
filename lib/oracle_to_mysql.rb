@@ -287,6 +287,12 @@ module OracleToMysql
       end
       return_this.uniq
     end
+
+    # This is the superset of all tables that OracleToMysql with create
+    # NOTE: it may also drop tables as dictated by otm_number_of_tables_to_retain
+    def otm_all_target_tables
+      [self.otm_table_namer.table_name,self.otm_table_namer.temp,self.otm_table_namer.yesterday]
+    end
   end
   
   
