@@ -73,6 +73,11 @@ module OracleToMysql
         "RENAME table 
           #{self.client_class.otm_target_table} TO #{self.client_class.otm_retained_target_table(tables_to_retain)}, 
           #{self.client_class.otm_temp_target_table} TO #{self.client_class.otm_target_table}"
+        # rename table #{self.otm_retained_target_table}
+        # 
+        # 
+        # #{self.client_class.otm_target_table} to #{self.client_class.otm_target_table}_old, #{self.client_class.otm_temp_target_table} to #{self.client_class.otm_target_table};
+        # 
       end
       
       

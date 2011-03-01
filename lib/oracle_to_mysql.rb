@@ -89,11 +89,7 @@ module OracleToMysql
     #
     def otm_retained_target_table(retain_n)
       if retain_n == 1
-        t = TableNamer::Base.new
-        t.name = self.otm_target_table
-        t.schema = self.otm_target_config_hash['database']
-        t.prefix = "old"
-        t.series[0]
+        "#{self.otm_target_table}#{OTM_RETAIN_KEY}"
       else
         raise "TODO: HAVE NOT DEALT WITH n != 1 retain option"
       end
