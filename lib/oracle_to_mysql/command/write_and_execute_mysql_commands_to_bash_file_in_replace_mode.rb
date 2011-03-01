@@ -1,3 +1,4 @@
+# THIS IS THE WORKHORSE FOR otm_strategy = :accumulative
 module OracleToMysql
   class Command
     class WriteAndExecuteMysqlCommandsToBashFileInReplaceMode < OracleToMysql::Command::WriteAndExecuteMysqlCommandsToBashFile
@@ -5,21 +6,21 @@ module OracleToMysql
       # OVERRIDDEN 
       def mysql_command_order        
         [:execute_otm_target_sql,
-         :drop_expired_retained_tables,   # defined in parent
-         :retention_policy_create_and_populate_tables,
+         :drop_yesterdays_table,
+         :copy_data_into_yesterdays_table,
          :load_data_infile,                # overridden in this class
-         # TODO reflect post mirror options
+         :reflect_post_mirror_option_to_optimize_table_for_replace_mode
         ]
       end
       
 ### MYSQL COMMANDS BEGIN      
-            
-      def retention_policy_create_and_populate_tables
-        raise "TODO: not implemented yet for retention :n != 1" if self.tables_to_retain != 1
+      def copy_data_into_yesterdays_table 
+        # This class is modded to change the target to yesterdays table
+        # 
         the_modded_client_class_inst = self.client_class.clone
         the_modded_client_class_inst.instance_eval(<<-EOS, __FILE__,__LINE__)
           def otm_target_table
-            "#{self.client_class.otm_retained_target_table(tables_to_retain)}"
+            "#{self.client_class.otm_table_namer.yesterday}"
           end
         EOS
         
@@ -46,6 +47,15 @@ module OracleToMysql
         "
       end
 
+      # OVERRIDDEN TO optimize the target, NOT the temp table
+      #
+      def reflect_post_mirror_option_to_optimize_table_for_replace_mode
+        s = ''
+        if self.client_class.otm_post_mirror_options[:optimize_table]
+          s << "OPTIMIZE TABLE #{self.client_class.otm_table_namer.table_name}"
+        end
+        s
+      end
 ### MYSQL COMMANDS END      
     end
   end
