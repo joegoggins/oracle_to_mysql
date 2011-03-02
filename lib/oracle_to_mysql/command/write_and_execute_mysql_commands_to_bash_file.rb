@@ -56,8 +56,7 @@ module OracleToMysql
       end
       
       def drop_expired_retained_tables
-        raise "TODO: not implemented yet for retention :n != 1" if tables_to_retain != 1
-         "drop table if exists #{self.client_class.otm_retained_target_table(tables_to_retain)}"
+        "drop table if exists #{self.client_class.otm_table_namer.yesterday}"
       end
       
       def reflect_post_mirror_option_to_optimize_table
@@ -69,9 +68,8 @@ module OracleToMysql
       end
       
       def perform_atomic_rename_of_tables
-        raise "TODO: not implemented yet for retention :n != 1" if tables_to_retain != 1
         "RENAME table 
-          #{self.client_class.otm_target_table} TO #{self.client_class.otm_retained_target_table(tables_to_retain)}, 
+          #{self.client_class.otm_target_table} TO #{self.client_class.otm_table_namer.yesterday}, 
           #{self.client_class.otm_table_namer.temp} TO #{self.client_class.otm_target_table}"
       end
       

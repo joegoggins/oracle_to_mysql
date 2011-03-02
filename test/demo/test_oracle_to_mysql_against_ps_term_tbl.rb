@@ -24,8 +24,6 @@ class TestOracleToMysql < Test::Unit::TestCase
     should "Have default otm_retain_options" do
       retain_options = @ps_term_tbl_inst.otm_retain_options
       assert(retain_options.has_key?(:n))
-      assert(retain_options.has_key?(:table_name_pattern))
-      assert(retain_options.has_key?(:new_table_name))
     end
     
     should "be able to invoke otm_execute" do

@@ -7,6 +7,7 @@ class TableNamer
     @table_name = table_name 
     @now = options[:now] || Time.now
   end
+
   def yesterday
     tt=(self.now - 24 * 60 * 60).strftime('%Y%m%d')
     "old_#{tt}_#{self.table_name}"

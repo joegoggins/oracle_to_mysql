@@ -86,20 +86,6 @@ module OracleToMysql
       File.join(self.tmp_directory,"#{self.otm_target_table}_#{self.otm_timestamp.to_i}_#{self.object_id}_#{Process.pid}_#{x}")
     end
     
-    # Must pass an argument, retain_n is "the number tables old relative to the current table"
-    # if n is 1, the retained table is simple <TBL>_old
-    # if its greater, there a dynamic "show retained tables for this table", sort lexically, 
-    # and return the -nth retain_n (i think) (negative nth) from the list
-    #
-    def otm_retained_target_table(retain_n)
-      if retain_n == 1
-        
-        "#{self.otm_target_table}#{OTM_RETAIN_KEY}"
-      else
-        raise "TODO: HAVE NOT DEALT WITH n != 1 retain option"
-      end
-    end
-    
     def otm_verify_config
       unless self.otm_target_config_hash.kind_of?(Hash)
         raise NoMysqlConfigSpecified.new("[.otm_verify_confg][otm_target_config_hash not a hash]")
@@ -125,17 +111,6 @@ module OracleToMysql
     def otm_default_strategy
       :atomic_rename        # can also be :accumulative
     end
-    
-    # These options set what happens to an existing target if it exists
-    # a retain value of n=1, means "keep the last table arround"
-    # 
-    def otm_default_retain_options
-      return {
-        :n => 1,
-        :table_name_pattern => Proc.new {|dest_table| Regexp.new(/(#{dest_table})(#{self.class::OTM_RETAIN_KEY})(\d+)/)},
-        :new_table_name => Proc.new {|dest_table| "#{dest_table}#{self.class::OTM_RETAIN_KEY}#{Time.now.to_i.to_s}"}
-      }        
-    end
   end
   
   module OptionalOverrideInstanceMethods    
@@ -152,7 +127,7 @@ module OracleToMysql
     #    
     def otm_retain_options
       if @otm_retain_options.nil?
-        @otm_retain_options = self.class.otm_default_retain_options
+        @otm_retain_options = {:n => 1} 
       end
       @otm_retain_options
     end
@@ -308,20 +283,6 @@ module OracleToMysql
         return_this += command.temp_file_symbols.map {|sym| self.otm_get_file_name_for(sym)}
       end
       return_this.uniq
-    end
-        
-    # returns an array of all target tables by reflecting the table retention options
-    #
-    def otm_all_target_tables
-      return_this = [self.otm_target_table]
-      if self.otm_retain_options[:n] == 0
-        return_this
-      else
-        (1..self.otm_retain_options[:n]).to_enum.each do |x|
-          return_this << self.otm_retained_target_table(x)
-        end
-        return_this
-      end
     end
   end
   
