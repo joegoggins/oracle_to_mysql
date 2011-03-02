@@ -4,7 +4,7 @@ module OracleToMysql
       def execute_internal
         h =self.client_class.otm_target_config_hash
         # Create MySQL connection via host or socket
-        if h.has_key?(:socket)
+        if h.has_key?('socket')
           self.info("Connecting with mysql gem via socket")
           conn = Mysql.new(
             nil, # no host
@@ -12,7 +12,7 @@ module OracleToMysql
             h['password'],
             h['database'],
             nil, # no port
-            h[:socket]
+            h['socket']
           )
         else
           self.info("Connecting with mysql gem via TCP")
