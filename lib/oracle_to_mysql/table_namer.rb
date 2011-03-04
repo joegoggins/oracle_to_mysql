@@ -21,7 +21,8 @@ module OracleToMysql
     end
 
     # list old tables, newest first
-    def sql_for_old_tables(schema)
+    def sql_for_old_tables(schema, options={:offset => 0})
+      # http://stackoverflow.com/questions/255517/mysql-offset-infinite-rows for limit statement details
       "
       SELECT 
          table_name 
@@ -30,6 +31,7 @@ module OracleToMysql
          table_name LIKE '#{old_table_sql_like_wildcard}' 
          AND table_schema = '#{schema}'
        ORDER BY table_name DESC
+       LIMIT #{options[:offset]}, 18446744073709551615
       "
     end 
   end
