@@ -17,7 +17,12 @@ module OracleToMysql
     end
 
     def old_table_sql_like_wildcard
-      "old_%_#{self.table_name}"
+      # When using a LIKE clause, we have to escape underscores or they'll be 
+      # interpreted as a single-character wildcard. The 8 unescaped underscores
+      # match the date in the table name. Using a '%' here can cause overlap
+      # can delete tables you want to keep!
+      # http://dev.mysql.com/doc/refman/5.0/en/string-comparison-functions.html#operator_like
+      "old\\_________\\_#{self.table_name.gsub('_', '\_')}"
     end
 
     # list old tables, newest first
