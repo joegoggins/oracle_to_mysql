@@ -1,83 +1,72 @@
-= OracleToMysql
-A wrapper for the `sqlplus` and `mysql` binary that pulls
+OracleToMysql
+=============
+A fast, minimal, debuggable Ruby wrapper for `sqlplus` and `mysql` binary's that pulls
 data out of an Oracle database and inserts it into MySQL.
 
-By omitting any Ruby/Mysql & Ruby/Oracle libraries things are kept 
-  fast, minimal, and debuggable.
+Please contact us via github if you have interest in using this tool, though it works great for us,
+it's rough around the edges with regard to installation.  If we know of folks who want to use it/contribute
+we'll make a point of cleaning things up and pushing to github more regularly.
 
-FYI, 1.0.0 is misleading, it's not some rock solid piece of uber-code.
-It's a weasel of a gem we just started using to replace our existing mirroring infrastructure
-in October 2010.
+System Dependencies
+-------------------
+* POpen4 gem
+* mysql gem
+* sqlplus binary in $PATH
+* mysql binary in $PATH
 
-== Use Case
-As a Ruby developer 
-with access to huge Oracle data warehouses
-I need a way to work with this data in my apps
-without using Oracle. ;)
+Usage
+-----
+    class TheMagicMirrorer
+      include OracleToMysql
 
-== System Dependencies
-popen4 (gem)
-sqlplus, and mysql binaries are in $PATH
+      def otm_source_sql
+        "select 
+           col || CHR(9) ||
+           col || CHR(9) ||
+           ...
+         from table
+         where ... Oracle statement"
+      end
 
-== Usage
-See the "test" cases in /test, there aren't really tests
-Just some code that uses the test/demo/* models to demonstrate 
-the two main mirror strategies associated with this tool (see below)
+      def otm_target_table
+        "a_mysql_table_name"
+      end
 
-For example:
-	class TheMagicMirrorer
-	  include OracleToMysql
+      def otm_target_sql
+        "create table if not exists #{self.otm_target_table} (... mysql statement   "
+      end
+    end
 
-	  def otm_source_sql
-	    "select 
-	       col || CHR(9) ||
-	       col || CHR(9) ||
-	       ...
-	     from table
-	     where ... Oracle statement"
-	  end
-
-	  def otm_target_table
-	    "a_mysql_table_name"
-	  end
-	
-	  def otm_target_sql
-	    "create table if not exists #{self.otm_target_table} (... mysql statement   "
-	  end
-	end
-  
-  x = TheMagicMirrorer.new
-  x.otm_execute
+    x = TheMagicMirrorer.new
+    x.otm_execute
 
 Will mirror the contents of otm_source_sql into the table created by otm_target_sql.
-The "|| CHR(9) ||" crap is Oracle sql code that tab deliminates the column content in
+The "|| CHR(9) ||" is Oracle sql code that tab deliminates the column content in
 the spooled sqlplus SQL data output.  The Mysql "load data infile" command eats this output.
 
 If you are using with Rails, it expects database.yml to have oracle_source and mysql_target entries to get the
-db connect info, to override the names, see OptionalOverrideInstanceMethods#otm_config_file and #otm_source_config_hash or #otm_target_config_hash
+db connect info, to override the names
 
-Also, will need to do:
-  gem install POpen4
+TODO: More usage examples for the config options below
 
-=== Mirror Strategies
+Configuration Options
+---------------------
+### Mirror Strategies
   :atomic_rename (Default)
     "load data infile" the spooled oracle tab deliminted data into a temp table first
     then atomically rename 
       current_target_table -> old_target_table AND
-      new_temp_table -> new_target_table
-    
+       new_temp_table -> new_target_table
   :accumulative
     "load data infile" directly into target_table replacing any existing
     rows in target when source data triggers "ON DUPLICATE KEY"
 
-=== Target Table Retention
-For both strategies, if the target_table already exists the
-default is to keep the existing table around and suffix it with "_old".
-This is called a :n => 1 retention policy.  
-
-The ability to retain n previous tables in the works, handy for data mining, stay tuned.
+### Target Table Retention
+Determines how many mysql target tables should be preserved.  By default it just keeps yesterdays
 
 == Gem Development & Testing
+TODO: Integrate Chris's more general and not brittle test cases
+
 The "tests" aka demo's assume you have a ps_term_tbl in your Oracle db.
 If you're running PeopleSoft at a University you'll probably have this...
 Otherwise, the tests won't run, it's just meant as an example that works in our world.
@@ -102,8 +91,8 @@ copy and populate from oracle_to_mysql.example.yml
 * New Features = let us know what yer thinkin, we might already be working on it
 
 == A few things we'd like to work on soon
-* retention policy of 0: don't keep yesterdays data (aka don't create *_old table in mysql)
-* retention policy > 1: keep N mysql table copies around
+* <strike>retention policy of 0: don't keep yesterdays data (aka don't create *_old table in mysql)<strike>
+* <strike>retention policy > 1: keep N mysql table copies around </strike>
 * usage of a Logger object instead of stdout
 * Better configuration of what happens when the otm_execute fails, not sure...some options might include
   * email someone a backtrace of the exception
