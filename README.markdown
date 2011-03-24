@@ -64,7 +64,11 @@ Configuration Options
 ### Target Table Retention
 Determines how many mysql target tables should be preserved.  By default it just keeps yesterdays
 
-== Gem Development & Testing
+
+Development
+-----------
+
+### Running Tests
 TODO: Integrate Chris's more general and not brittle test cases
 
 The "tests" aka demo's assume you have a ps_term_tbl in your Oracle db.
@@ -84,22 +88,16 @@ This assumes you have a connection file in the test dir:
   oracle_to_mysql.yml
 copy and populate from oracle_to_mysql.example.yml
 
-== Note on Patches/Pull Requests
-* Fork the project.
-* Add files to test/demo/* that demonstrate how you are using the tool.
-* Bugfixes = fork, fix, commit, pull request.
-* New Features = let us know what yer thinkin, we might already be working on it
 
-== A few things we'd like to work on soon
+### TODOs
+* Make a more general testing suite
+* Re-release gem so the dependenies work: Should be able to do `gem install oracle_to_mysql`
+  and have things actually work
 * <strike>retention policy of 0: don't keep yesterdays data (aka don't create *_old table in mysql)<strike>
 * <strike>retention policy > 1: keep N mysql table copies around </strike>
-* usage of a Logger object instead of stdout
-* Better configuration of what happens when the otm_execute fails, not sure...some options might include
-  * email someone a backtrace of the exception
-  * log the exception backtrace to a table in the db
-  * either cleanup + delete temp files or keep around (now it just leaves the temp files around)
 
-== Known Issues
+### Known Issues
+* Gem packaging is not correct...cumbersome
 * Since source data is written to disk a tab delimintated file, if the source oracle data contains a \t character in might mess things up (none of our data has tabs so we haven't had problems)
 * Add validations/checks for stuff in validate_otm_source_sql in write_sqlplus_commands_to_file.rb if you encounter goofy sqlplus errors
   Things that are not easily programmatically detectable ought just have an inline note i suppose
