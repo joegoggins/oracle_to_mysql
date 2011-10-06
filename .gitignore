@@ -20,4 +20,4 @@ pkg
 
 ## PROJECT::SPECIFIC
 test/oracle_to_mysql.yml
-test/on.lst
+on.lst

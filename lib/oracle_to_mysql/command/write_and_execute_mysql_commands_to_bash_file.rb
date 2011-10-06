@@ -87,7 +87,7 @@ module OracleToMysql
 
       def command_line_invocation
         h = self.client_class.otm_target_config_hash
-        "mysql -u'#{h['username']}' -h'#{h['host']}' -p'#{h['password']}' #{h['database']} < '#{self.client_class.otm_get_file_name_for(:mysql_commands)}'"
+        "mysql -u'#{h['username']}' -h'#{h['host']}' -p'#{h['password']}' --enable-local-infile #{h['database']} < '#{self.client_class.otm_get_file_name_for(:mysql_commands)}'"
       end
       
       # overridden from parent to help CleanupTempFilesAndTables do it's job
