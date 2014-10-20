@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "lib/oracle_to_mysql.rb",
     "lib/oracle_to_mysql/api_instance_methods.rb",
+    "lib/oracle_to_mysql/table_namer.rb",
     "lib/oracle_to_mysql/command.rb",
     "lib/oracle_to_mysql/command/delete_temp_files.rb",
     "lib/oracle_to_mysql/command/fork_and_execute_sqlplus_command.rb",

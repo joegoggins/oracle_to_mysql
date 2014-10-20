@@ -9,6 +9,7 @@ require 'oracle_to_mysql/private_instance_methods'
 require 'oracle_to_mysql/must_override_instance_methods'
 require 'oracle_to_mysql/optional_override_instance_methods'
 require 'oracle_to_mysql/api_instance_methods'
+require 'oracle_to_mysql/table_namer'
 
 # These commands are used internally to actuall do the work
 require 'oracle_to_mysql/command'
